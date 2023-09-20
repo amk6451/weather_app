@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+</head>
+<body>
+
+<form>
+    <input type="text" id="location" value="London"><br><br>
+    <input type="submit" value="Submit">
+</form>
+<div class = 'container' id = "container"></div>
+    <script>
+
+const buttonSubmit =  document.querySelector('form');
+const selectLocation =  document.getElementById('location')
+const container =  document.getElementById('container')
+
+function updateWeather(weatherData)
+    {
+        clearDOM();
+        
+        weatherData.forecast.forecastday.forEach( async day =>{
+            const divElement = document.createElement("div");
+
+            const date = day.date;
+            const maxTemp = day.day.maxtemp_f;
+            const minTemp = day.day.mintemp_f;
+            const conditionText = day.day.condition.text;
+
+            divElement.textContent = `Date: ${date}, Max Temp: ${maxTemp}°F, Min Temp: ${minTemp}°F, Condition: ${conditionText}`;
+            divElement.classList.add("currDay");
+            container.appendChild(divElement);
+
+        });
+    };
+
+async function getWeather(location){
+    const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=2e67b715284d4c61aff210743231109&q=${location}&days=5`,{mode: 'cors'})
+    const weatherData = await response.json();
+    updateWeather(weatherData);
+    };
+
+    buttonSubmit.addEventListener('submit', function(event){
+            event.preventDefault();
+            getWeather(selectLocation.value);
+
+    });
+
+    function clearDOM() {
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    }
+
+    </script>
+</body>
+</html>
